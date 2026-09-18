@@ -41,8 +41,6 @@ Aplikasi ini menyatukan 3 modul utama:
    - Klik kartu kamar apa pun di denah admin -> modal rincian terbuka -> ubah status (Terisi, Tersedia, Maintenance) -> KPI okupansi dan komposisi kamar langsung terhitung ulang.
 6. **Kuitansi Digital Sah (e-Receipt)**:
    - Klik tombol lihat kuitansi di mana pun -> muncul modal kuitansi format resmi Indonesia lengkap dengan watermark LUNAS, rincian biaya, terbilang rupiah, dan tombol **Cetak / Unduh PDF**.
-7. **PIN Kunci & Wi-Fi Copy**:
-   - Klik tombol mata untuk intip PIN (`••••••` ↔ `928174`), dan klik ikon salin untuk copy Wi-Fi/PIN dengan toast notifikasi.
 
 ---
 

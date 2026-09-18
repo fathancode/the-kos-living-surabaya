@@ -1,0 +1,760 @@
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    overscroll-behavior-y: none;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(180, 190, 205, 0.5);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 150, 170, 0.8);
+}
+
+/* ============================================================
+   VIEW CONTAINER TRANSITIONS
+   - All views are strictly hidden by default (!important to override utility classes)
+   - When .active, shows as flex container
+   ============================================================ */
+.view-container {
+  display: none !important;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.view-container.active {
+  display: flex !important;
+  flex-direction: column;
+  animation: viewFadeIn 0.22s ease-out forwards;
+}
+
+/* Ensure admin sidebar & backdrop are strictly hidden when view-admin is not active */
+#view-admin:not(.active) #admin-sidebar,
+#view-admin:not(.active) #admin-sidebar-backdrop {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Portal view - justify between for header/content/footer */
+#view-portal.active {
+  justify-content: space-between;
+}
+
+
+/* Backdrop blur for modals */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Modal content pop animation */
+.modal-content-anim {
+  animation: modalPop 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Toast container */
+#toast-container {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+  max-width: calc(100vw - 2.5rem);
+}
+
+.toast {
+  pointer-events: auto;
+  animation: toastSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes toastSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(20px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+/* ============================================================
+   PRINT & PDF EXPORT STYLES (A4 Document Format)
+   ============================================================ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Hide all app chrome & non-printable elements */
+  header,
+  footer,
+  nav,
+  aside,
+  .view-container,
+  .floating-demo-bar,
+  .no-print,
+  .toast-container,
+  #admin-sidebar,
+  #admin-sidebar-backdrop,
+  #modal-backdrop,
+  button,
+  .modal-backdrop:not(.printable-modal) {
+    display: none !important;
+  }
+
+  /* Reset modal backdrop for print */
+  .modal-backdrop {
+    position: static !important;
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    overflow: visible !important;
+  }
+
+  /* 1. Kuitansi Pembayaran Sah (Printable) */
+  #modal-kuitansi:not(.hidden) {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  #modal-kuitansi:not(.hidden) > div {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    background: transparent !important;
+  }
+
+  #kuitansi-printable {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 24px 28px !important;
+    background: #ffffff !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* 2. Surat Perjanjian Sewa (Printable) */
+  #modal-kontrak-sewa:not(.hidden) {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  #modal-kontrak-sewa:not(.hidden) > div {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    background: transparent !important;
+  }
+
+  #kontrak-printable {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 24px 28px !important;
+    background: #ffffff !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Print output is limited to the payment receipt or report totals. */
+  #modal-kontrak-sewa:not(.hidden) {
+    display: none !important;
+  }
+
+  /* 3. Laporan Rekap Okupansi & Denah (Printable) */
+  #modal-rekap-okupansi:not(.hidden) {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  #modal-rekap-okupansi:not(.hidden) > div {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    background: transparent !important;
+  }
+
+  #rekap-okupansi-printable {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 24px 28px !important;
+    background: #ffffff !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+  }
+
+  #rekap-okupansi-printable > *:not(.print-total-only) {
+    display: none !important;
+  }
+
+  #rekap-okupansi-printable .print-total-only {
+    display: grid !important;
+  }
+
+  /* Color Fidelity & Contrast in Print */
+  .text-primary, .text-red-600, .text-red-700 {
+    color: #b91c1c !important;
+  }
+
+  .text-emerald-800, .text-emerald-700, .text-emerald-600 {
+    color: #065f46 !important;
+  }
+
+  .bg-emerald-100 {
+    background-color: #d1fae5 !important;
+  }
+
+  .bg-slate-50 {
+    background-color: #f8fafc !important;
+  }
+
+  .border-slate-200, .border-slate-300 {
+    border-color: #cbd5e1 !important;
+  }
+}
+
+
+/* Floating role switcher */
+.floating-demo-bar {
+  width: min(245px, calc(100vw - 1.5rem));
+}
+
+.floating-role-toggle,
+.floating-role-options {
+  box-shadow: 0 4px 20px -2px rgba(11, 28, 48, 0.16), 0 2px 6px -1px rgba(11, 28, 48, 0.08);
+}
+
+.floating-role-toggle {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.55rem 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  color: #0b1c30;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-radius 0.24s ease;
+}
+
+.floating-role-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -8px rgba(11, 28, 48, 0.3);
+}
+
+.floating-role-mark {
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.7rem;
+  background: #b70011;
+  color: #fff;
+}
+
+.floating-role-copy {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.floating-role-label,
+.floating-role-current {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.floating-role-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #334155;
+}
+
+.floating-role-current {
+  font-size: 0.68rem;
+  color: #64748b;
+}
+
+.floating-role-chevron {
+  color: #64748b;
+  transition: transform 0.24s ease;
+}
+
+.floating-role-options {
+  display: grid;
+  gap: 0.25rem;
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  padding: 0 0.4rem;
+  border: 0 solid rgba(226, 232, 240, 0.9);
+  border-radius: 0 0 1rem 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  opacity: 0;
+  transform: translateY(0.5rem) scale(0.98);
+  transform-origin: top;
+  pointer-events: none;
+  transition: max-height 0.3s ease, margin-top 0.3s ease, padding 0.3s ease, opacity 0.2s ease, transform 0.3s ease;
+}
+
+.floating-demo-bar.is-expanded .floating-role-toggle {
+  border-radius: 1rem 1rem 0 0;
+}
+
+.floating-demo-bar.is-expanded .floating-role-options {
+  max-height: 12rem;
+  margin-top: -0.05rem;
+  padding: 0.4rem;
+  border-width: 0 1px 1px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.floating-demo-bar.is-expanded .floating-role-chevron {
+  transform: rotate(180deg);
+}
+
+.floating-role-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0.2rem 0.35rem;
+}
+
+.floating-role-status,
+.floating-reset-button {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.62rem;
+  color: #64748b;
+}
+
+.floating-role-status {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.floating-role-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: #10b981;
+  box-shadow: 0 0 0 3px #d1fae5;
+}
+
+.floating-reset-button {
+  padding: 0.22rem 0.3rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.floating-reset-button:hover {
+  color: #b70011;
+  background: #fef2f2;
+}
+
+.floating-role-options .floating-btn {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-role-toggle,
+  .floating-role-options,
+  .floating-role-chevron {
+    transition: none;
+  }
+}
+
+/* Room card pulse on maintenance */
+.room-maintenance-pulse {
+  animation: roomPulse 2s infinite;
+}
+
+@keyframes roomPulse {
+  0%, 100% {
+    border-color: rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    border-color: rgba(220, 38, 38, 0.9);
+  }
+}
+
+/* Smooth scroll for anchor links with offset for fixed headers */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+}
+
+/* ============================================================
+   DYNAMIC ACTIVE NAVIGATION PILL & INDICATOR STYLES
+   ============================================================ */
+.tenant-nav-link {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.tenant-nav-link.active {
+  background-color: var(--primary-container, #ba1a1a) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 4px rgba(186, 26, 26, 0.25);
+}
+
+.tenant-mobile-nav-link {
+  transition: all 0.2s ease;
+}
+
+.tenant-mobile-nav-link.active {
+  color: #ba1a1a !important;
+  font-weight: 700 !important;
+}
+
+.tenant-mobile-nav-link.active .material-symbols-outlined {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.admin-nav-link {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-nav-link.active {
+  background-color: var(--primary-container, #ba1a1a) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 4px rgba(186, 26, 26, 0.25);
+}
+
+
+/* Animated skeleton loading placeholder */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* Animated progress bar fill */
+@keyframes progressFill {
+  from { width: 0%; }
+  to { width: var(--target-width, 100%); }
+}
+
+.progress-animated {
+  animation: progressFill 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Subtle card hover lift */
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(11, 28, 48, 0.12);
+}
+
+/* KPI number counter animation */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.count-up {
+  animation: countUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Badge pulse for urgent items */
+.badge-urgent-pulse {
+  animation: urgentPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes urgentPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(183, 0, 17, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(183, 0, 17, 0); }
+}
+
+/* Improved focus styles */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #b70011 !important;
+  box-shadow: 0 0 0 2px rgba(183, 0, 17, 0.12);
+}
+
+/* Scrollable modal content on small screens */
+.modal-scroll {
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+}
+
+/* No scrollbar utility */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Dot blink animation */
+@keyframes dotBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.dot-blink {
+  animation: dotBlink 1.2s ease-in-out infinite;
+}
+
+/* Status chip transitions */
+.status-chip {
+  transition: all 0.2s ease;
+}
+
+/* Sidebar smooth transitions */
+#admin-sidebar {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Table row hover */
+tr:hover td {
+  background-color: rgba(229, 238, 255, 0.25);
+  transition: background-color 0.15s ease;
+}
+
+
+/* Admin main layout fix */
+#view-admin > main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Auth tab visibility helper */
+.auth-tab-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-tab-content.hidden {
+  display: none;
+}
+
+/* Auth footer visibility helper */
+.auth-footer-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.auth-footer-section.hidden {
+  display: none;
+}
+
+/* ============================================================
+   TYPOGRAPHY & FONT CONSISTENCY FIXES
+   Custom token classes used in JS-rendered HTML
+   ============================================================ */
+.font-label-sm {
+  font-size: 0.6875rem; /* 11px */
+  line-height: 1.4;
+}
+.font-label-md {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1.5;
+}
+.font-body-sm {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1.6;
+}
+.font-body-md {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.6;
+}
+.font-headline-md {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.4;
+}
+
+/* Spacing token classes used in JS-rendered HTML */
+.px-space-xs { padding-left: 0.375rem; padding-right: 0.375rem; }
+.px-space-sm { padding-left: 0.5rem; padding-right: 0.5rem; }
+.px-space-md { padding-left: 0.75rem; padding-right: 0.75rem; }
+.py-space-xs { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+.py-space-sm { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.p-space-xs { padding: 0.375rem; }
+.p-space-sm { padding: 0.5rem; }
+.p-space-md { padding: 0.75rem; }
+.p-space-lg { padding: 1rem; }
+
+/* Label text-size classes used in rendered content */
+.text-label-sm { font-size: 0.6875rem; }
+.text-label-md { font-size: 0.75rem; }
+.text-body-sm { font-size: 0.75rem; }
+.text-headline-md { font-size: 1.125rem; }
+
+/* ============================================================
+   PREVENT EXCESSIVE TRANSPARENCY LAYERING
+   ============================================================ */
+/* Ensure glass elements don't stack too many opacity layers */
+.backdrop-blur-md {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.backdrop-blur-xl {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Line-clamp utility */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
